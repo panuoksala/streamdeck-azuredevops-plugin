@@ -24,7 +24,7 @@
   "Description": "Start AzureDevops builds and releases directly from your Stream Deck device.",
   "Name": "AzureDevOpsRunner",
   "Icon": "images/Azure-DevOps72",
-  "URL": "https://www.elgato.com/gaming/stream-deck",
+  "URL": "https://github.com/panuoksala/streamdeck-azuredevops-plugin",
   "Version": "1.0",
   "SDKVersion": 2,
   "Software": {
