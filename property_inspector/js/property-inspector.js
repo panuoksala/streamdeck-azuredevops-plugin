@@ -16,9 +16,13 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     if (actionInfo.payload.settings.settingsModel) {
         settingsModel.ProjectName = actionInfo.payload.settings.settingsModel.ProjectName;
         settingsModel.OrganizationName = actionInfo.payload.settings.settingsModel.OrganizationName;
-        settingsModel.PAT = actionInfo.payload.settings.settingsModel.PAT;        
+        settingsModel.PAT = actionInfo.payload.settings.settingsModel.PAT;
         settingsModel.DefinitionId = actionInfo.payload.settings.settingsModel.DefinitionId;
         settingsModel.PipelineType = actionInfo.payload.settings.settingsModel.PipelineType;
+    } else {
+        settingsModel.PAT = "";
+        settingsModel.OrganizationName = "";
+        settingsModel.ProjectName = "";
     }
 
     document.getElementById('txtProjectName').value = settingsModel.ProjectName;
