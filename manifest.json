@@ -1,11 +1,11 @@
 {
   "Actions": [
     {
-      "Icon": "images/actionIcon",
+      "Icon": "images/Azure-DevOps20",
       "Name": "Azure DevOps build & release",
       "States": [
         {
-          "Image": "images/Azure-DevOps144",
+          "Image": "images/Azure-DevOps72",
           "TitleAlignment": "middle",
           "FontSize": "16"
         }
@@ -16,14 +16,14 @@
     }
   ],
   "Category": "Azure DevOps",
-  "CategoryIcon": "images/category/none",
+  "CategoryIcon": "images/Azure-DevOps28",
   "Disabled": false,
   "Author": "Panu Oksala",
   "CodePath": "StreamDeckAzureDevOps.exe",
   "PropertyInspectorPath": "property_inspector/property_inspector.html",
   "Description": "Start AzureDevops builds and releases directly from your Stream Deck device.",
   "Name": "AzureDevOpsRunner",
-  "Icon": "images/pluginIcon",
+  "Icon": "images/Azure-DevOps72",
   "URL": "https://www.elgato.com/gaming/stream-deck",
   "Version": "1.0",
   "SDKVersion": 2,
