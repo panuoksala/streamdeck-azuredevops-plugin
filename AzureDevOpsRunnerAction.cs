@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 
 namespace StreamDeckAzureDevOps
 {
-    [ActionUuid(Uuid = "net.oksala.azuredevops.runner.DefaultPluginAction")]
+    [ActionUuid(Uuid = "net.oksala.azuredevops.runner")]
     public class AzureDevOpsRunnerAction : BaseStreamDeckActionWithSettingsModel<Models.AzureDevOpsSettingsModel>
     {
         public override async Task OnKeyUp(StreamDeckEventPayload args)

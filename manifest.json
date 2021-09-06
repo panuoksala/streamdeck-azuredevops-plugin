@@ -12,7 +12,7 @@
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "Start AzureDevops builds and releases from your Stream Deck device.",
-      "UUID": "net.oksala.azuredevops.runner.DefaultPluginAction"
+      "UUID": "net.oksala.azuredevops.runner"
     }
   ],
   "Category": "Azure DevOps",
