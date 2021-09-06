@@ -1,8 +1,9 @@
 # Stream Deck Azure DevOps plugin
 Source code of Azure DevOps plugin for [Elgato Stream Deck][Stream Deck]. This project works currently only on Windows devices.
+This project is created by using the [Stream Deck C# Toolkit][Stream Deck C# Toolkit Homepage].
 
 ## References
-* [Plugin Homepage](https://github.com/FritzAndFriends/StreamDeckToolkit)
+* [Stream Deck C# Toolkit Homepage](https://github.com/FritzAndFriends/StreamDeckToolkit)
 * [Stream Deck Page][Stream Deck]
 * [Stream Deck SDK Documentation][Stream Deck SDK]
 
