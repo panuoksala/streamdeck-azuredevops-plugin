@@ -1,0 +1,39 @@
+{
+  "Actions": [
+    {
+      "Icon": "images/actionIcon",
+      "Name": "Azure DevOps build & release",
+      "States": [
+        {
+          "Image": "images/Azure-DevOps144",
+          "TitleAlignment": "middle",
+          "FontSize": "16"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Start AzureDevops builds and releases from your Stream Deck device.",
+      "UUID": "net.oksala.azuredevops.runner.DefaultPluginAction"
+    }
+  ],
+  "Category": "Azure DevOps",
+  "CategoryIcon": "images/category/none",
+  "Disabled": false,
+  "Author": "Panu Oksala",
+  "CodePath": "StreamDeckAzureDevOps.exe",
+  "PropertyInspectorPath": "property_inspector/property_inspector.html",
+  "Description": "Start AzureDevops builds and releases directly from your Stream Deck device.",
+  "Name": "AzureDevOpsRunner",
+  "Icon": "images/pluginIcon",
+  "URL": "https://www.elgato.com/gaming/stream-deck",
+  "Version": "1.0",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "4.1"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ]
+}
