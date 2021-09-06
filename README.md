@@ -4,11 +4,11 @@ This project is created by using the [Stream Deck C# Toolkit][Stream Deck C# Too
 
 ## How to use this plugin
 Install the plugin from Stream Deck Store and create PAT token with read & execute rights to build and releases.
-Configurations:
-Organization name: The name of the Azure DevOps organization. The Azure DevOps url contains the organization name: dev.azure.com/{organization name}.
-Project name: The name of the project like it is in the project URL. So spaces must be replaced with %20. For example Example Project is Example%20Project
-PAT: The personal access token with read and execute permissions for build and release pipelines. Dont create PAT tokens with full access!
-Pipeline type: Build or release depending on what kind of action you want to trigger
+###Configurations:
+Organization name: The name of the Azure DevOps organization. The Azure DevOps url contains the organization name: dev.azure.com/{organization name}.<br />
+Project name: The name of the project like it is in the project URL. So spaces must be replaced with %20. For example Example Project is Example%20Project<br />
+PAT: The personal access token with read and execute permissions for build and release pipelines. Dont create PAT tokens with full access!<br />
+Pipeline type: Build or release depending on what kind of action you want to trigger<br />
 Definition Id: The build or release definition ID. Open the pipeline in edit mode and copy the ID from URL. For example: https://dev.azure.com/{organization name}/{projectname}/_apps/hub/ms.vss-ciworkflow.build-ci-hub?_a=edit-build-definition&id={definition ID}
 
 ## References
