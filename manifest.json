@@ -2,7 +2,7 @@
   "Actions": [
     {
       "Icon": "images/Azure-DevOps20",
-      "Name": "Azure DevOps build & release",
+      "Name": "Azure DevOps build & release plugin by Panu Oksala",
       "States": [
         {
           "Image": "images/Azure-DevOps72",
@@ -15,7 +15,7 @@
       "UUID": "net.oksala.azuredevops.runner"
     }
   ],
-  "Category": "Productivity",
+  "Category": "Azure DevOps",
   "CategoryIcon": "images/Azure-DevOps28",
   "Disabled": false,
   "Author": "Panu Oksala",
