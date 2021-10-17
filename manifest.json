@@ -11,17 +11,17 @@
         }
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "Start AzureDevops builds and releases from your Stream Deck device.",
+      "Tooltip": "Start Azure DevOps builds and releases from your Stream Deck device.",
       "UUID": "net.oksala.azuredevops.runner"
     }
   ],
-  "Category": "Azure DevOps",
+  "Category": "Productivity",
   "CategoryIcon": "images/Azure-DevOps28",
   "Disabled": false,
   "Author": "Panu Oksala",
   "CodePath": "StreamDeckAzureDevOps.exe",
   "PropertyInspectorPath": "property_inspector/property_inspector.html",
-  "Description": "Start AzureDevops builds and releases directly from your Stream Deck device.",
+  "Description": "Stream Deck plugin for Azure DevOps by Panu Oksala. Start builds and deployments directly from your Stream Deck device.",
   "Name": "AzureDevOpsRunner",
   "Icon": "images/Azure-DevOps72",
   "URL": "https://github.com/panuoksala/streamdeck-azuredevops-plugin",
