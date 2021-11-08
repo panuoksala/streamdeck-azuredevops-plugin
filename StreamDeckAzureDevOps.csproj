@@ -20,18 +20,7 @@
 	  <Compile Remove="images\category\**" />
 	  <EmbeddedResource Remove="images\category\**" />
 	  <None Remove="images\category\**" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="images\Azure-DevOps.png" />
-	  <None Remove="images\Azure-DevOps144.png" />
-	  <None Remove="images\Azure-DevOps20%402x.png" />
-	  <None Remove="images\Azure-DevOps20.png" />
-	  <None Remove="images\Azure-DevOps28%402x.png" />
-	  <None Remove="images\Azure-DevOps28.png" />
-	  <None Remove="images\Azure-DevOps40.png" />
-	  <None Remove="images\Azure-DevOps72%402x.png" />
-	  <None Remove="images\Azure-DevOps72.png" />
-	  <None Remove="images\Azure-DevOpsIcon.png" />
+	  <Compile Remove="images\*.pdn" />
 	</ItemGroup>
 
 	<!--Dependencies-->
@@ -56,25 +45,7 @@
 
 	<!--Deployment files that must go with the build executable -->
 	<ItemGroup>
-		<Content Include="images\Azure-DevOps.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="images\Azure-DevOps20.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="images\Azure-DevOps20@2x.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="images\Azure-DevOps28.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="images\Azure-DevOps28@2x.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="images\Azure-DevOps72.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="images\Azure-DevOps72@2x.png">
+		<Content Include="images\*.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="manifest.json">
