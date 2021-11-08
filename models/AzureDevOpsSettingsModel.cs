@@ -11,11 +11,21 @@
         /// </summary>
         public int PipelineType { get; set; } = 0;
         public int DefinitionId { get; set; } = 0;
+
+        public int TapAction { get; set; } = 1;
+        public int LongPressAction { get; set; } = 2;
     }
 
     public enum PipelineType
     {
         Build = 0,
         Release = 1
+    }
+
+    public enum KeyPressAction
+    {
+        DoNothing = 0,
+        UpdateStatus = 1,
+        Run = 2
     }
 }
