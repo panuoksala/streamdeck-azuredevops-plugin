@@ -21,10 +21,14 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         settingsModel.PipelineType = actionInfo.payload.settings.settingsModel.PipelineType;
         settingsModel.TapAction = actionInfo.payload.settings.settingsModel.TapAction;
         settingsModel.LongPressAction = actionInfo.payload.settings.settingsModel.LongPressAction;
+        settingsModel.UpdateStatusEverySecond = actionInfo.payload.settings.settingsModel.UpdateStatusEverySecond;
+        settingsModel.ErrorMessage = actionInfo.payload.settings.settingsModel.ErrorMessage;
     } else {
         settingsModel.PAT = "";
         settingsModel.OrganizationName = "";
         settingsModel.ProjectName = "";
+        settingsModel.UpdateStatusEverySecond = 60;
+        settingsModel.ErrorMessage = "";
     }
 
     document.getElementById('txtProjectName').value = settingsModel.ProjectName;
@@ -34,12 +38,13 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     document.getElementById('pipeline_type').value = settingsModel.PipelineType;
     document.getElementById('tap_action').value = settingsModel.TapAction;
     document.getElementById('long_press_action').value = settingsModel.LongPressAction;
+    document.getElementById('update_status_every_second').value = settingsModel.UpdateStatusEverySecond;
+    document.getElementById('error_message').innerHTML = settingsModel.ErrorMessage;
 
     websocket.onopen = function () {
         var json = { event: inRegisterEvent, uuid: inUUID };
         // register property inspector to Stream Deck
         websocket.send(JSON.stringify(json));
-
     };
 
     websocket.onmessage = function (evt) {
@@ -75,6 +80,10 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
                 if (jsonObj.payload.settings.settingsModel.LongPressAction) {
                     settingsModel.LongPressAction = jsonObj.payload.settings.settingsModel.LongPressAction;
                     document.getElementById('long_press_action').value = settingsModel.LongPressAction;
+                }
+                if (jsonObj.payload.settings.settingsModel.UpdateStatusEverySecond) {
+                    settingsModel.UpdateStatusEverySecond = jsonObj.payload.settings.settingsModel.UpdateStatusEverySecond;
+                    document.getElementById('update_status_every_second').value = settingsModel.UpdateStatusEverySecond;
                 }
                 break;
             default:

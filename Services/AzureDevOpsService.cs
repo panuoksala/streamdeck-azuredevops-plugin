@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using Microsoft.VisualStudio.Services.WebApi;
 using StreamDeckAzureDevOps.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -66,10 +67,35 @@ namespace StreamDeckAzureDevOps.Services
             var buildClient = connection.GetClient<BuildHttpClient>();
             var projectClient = connection.GetClient<ProjectHttpClient>();
 
-            var buildDefinition = await buildClient.GetDefinitionAsync(settings.ProjectName, settings.DefinitionId);
             var teamProject = await projectClient.GetProject(settings.ProjectName);
 
-            await buildClient.QueueBuildAsync(new Build() { Definition = buildDefinition, Project = teamProject });
+            List<BuildDefinitionReference> buildDefinitions;
+            if (settings.DefinitionId > 0)
+            {
+                BuildDefinition buildDefinition = await buildClient.GetDefinitionAsync(settings.ProjectName, settings.DefinitionId);
+                if (buildDefinition == null)
+                {
+                    throw new ArgumentException($"Build definition {settings.DefinitionId} not found");
+                }
+
+                buildDefinitions = new List<BuildDefinitionReference>
+                {
+                    buildDefinition
+                };
+            }
+            else
+            {
+                buildDefinitions = await buildClient.GetDefinitionsAsync(settings.ProjectName);
+                if (buildDefinitions?.Any() != true)
+                {
+                    throw new ArgumentException($"No build definitions found");
+                }
+            }
+
+            foreach (var buildDef in buildDefinitions)
+            {
+                await buildClient.QueueBuildAsync(new Build() { Definition = buildDef, Project = teamProject });
+            }
         }
 
         public async Task StartRelease(AzureDevOpsSettingsModel settings)

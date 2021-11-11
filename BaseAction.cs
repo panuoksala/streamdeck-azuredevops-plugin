@@ -10,11 +10,24 @@ namespace StreamDeckAzureDevOps
     {
         private CancellationTokenSource _backgroundTaskToken;
         private DateTime _pressDownDateTime;
+        private int _updateStatusEverySecond;
 
         protected double DoublePressDuration { get; set; } = 1;
 
         public override async Task OnDidReceiveSettings(StreamDeckEventPayload args)
         {
+            if (_updateStatusEverySecond != SettingsModel.UpdateStatusEverySecond)
+            {
+                _updateStatusEverySecond = SettingsModel.UpdateStatusEverySecond;
+                if (_updateStatusEverySecond == 0)
+                {
+                    StopBackgroundTask();
+                }
+                else
+                {
+                    StartBackgroundTask(args);
+                }
+            }
             await base.OnDidReceiveSettings(args);
         }
 
@@ -61,7 +74,10 @@ namespace StreamDeckAzureDevOps
                     await UpdateDisplay(args);
                 }
 
-                StartBackgroundTask(args);
+                if (SettingsModel.UpdateStatusEverySecond > 0)
+                {
+                    StartBackgroundTask(args);
+                }
             }
             catch (Exception ex)
             {
@@ -117,6 +133,9 @@ namespace StreamDeckAzureDevOps
         {
             while (!ct.IsCancellationRequested)
             {
+                // Cancellation exception is expected.
+                await Task.Delay(TimeSpan.FromSeconds(SettingsModel.UpdateStatusEverySecond), ct);
+
                 try
                 {
                     await UpdateDisplay(args);
@@ -125,9 +144,6 @@ namespace StreamDeckAzureDevOps
                 {
                     await OnError(args, ex);
                 }
-
-                // Cancellation exception is expected.
-                await Task.Delay(TimeSpan.FromMinutes(1), ct);
             }
         }
     }

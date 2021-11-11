@@ -14,6 +14,10 @@
 
         public int TapAction { get; set; } = 1;
         public int LongPressAction { get; set; } = 2;
+
+        public int UpdateStatusEverySecond { get; set; } = 60;
+
+        public string ErrorMessage { get; set; }
     }
 
     public enum PipelineType

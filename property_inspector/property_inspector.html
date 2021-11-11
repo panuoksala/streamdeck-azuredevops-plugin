@@ -59,6 +59,15 @@
             </select>
         </div>
 
+        <div class="sdpi-item" id="txt_update_status_every_second" type="field">
+            <div class="sdpi-item-label">Update status every second</div>
+            <input id="update_status_every_second" class="sdpi-item-value" type="number" inputmode="numeric" placeholder="Update status every X seconds (0 is never)" onKeyUp="setSettings(event.target.value, 'UpdateStatusEverySecond')" required />
+        </div>
+
+        <div class="sdpi-item" id="select_long_press_action">
+            <div class="sdpi-item-label">Errors</div>
+            <div id="error_message" style="color: red">Test</div>
+        </div>
     </div>
     <script src="js/property-inspector.js"></script>
 </body>

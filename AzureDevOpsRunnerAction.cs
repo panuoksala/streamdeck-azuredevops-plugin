@@ -60,8 +60,12 @@ namespace StreamDeckAzureDevOps
 
         public override async Task OnError(StreamDeckEventPayload args, Exception ex)
         {
+            SettingsModel.ErrorMessage = ex.Message;
+
             await Manager.ShowAlertAsync(args.context);
             await Manager.SetImageAsync(args.context, "images/Azure-DevOps-unknown.png");
+
+            await Manager.SetSettingsAsync(args.context, SettingsModel);
         }
 
         public override bool IsSettingsValid()
@@ -77,20 +81,34 @@ namespace StreamDeckAzureDevOps
             switch (keyPressAction)
             {
                 case KeyPressAction.DoNothing:
+                    // Do nothing :)
                     break;
 
                 case KeyPressAction.UpdateStatus:
                     await UpdateDisplay(args);
+                    await Manager.ShowOkAsync(args.context);
                     break;
 
-                case KeyPressAction.Run when pipelineType == PipelineType.Build:
-                    await _service.StartBuild(SettingsModel);
-                    break;
+                case KeyPressAction.Run:
+                    await Manager.SetImageAsync(args.context, "images/Azure-DevOps-updating.png");
 
-                case KeyPressAction.Run when pipelineType == PipelineType.Release:
-                    await _service.StartRelease(SettingsModel);
+                    if (pipelineType == PipelineType.Build)
+                    {
+                        await _service.StartBuild(SettingsModel);
+                    }
+                    else
+                    {
+                        await _service.StartRelease(SettingsModel);
+                    }
+
+                    await Manager.ShowOkAsync(args.context);
+
+                    await UpdateDisplay(args);
                     break;
             }
+
+            SettingsModel.ErrorMessage = string.Empty;
+            await Manager.SetSettingsAsync(args.context, SettingsModel);
         }
     }
 }
