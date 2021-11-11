@@ -19,6 +19,8 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         settingsModel.PAT = actionInfo.payload.settings.settingsModel.PAT;
         settingsModel.DefinitionId = actionInfo.payload.settings.settingsModel.DefinitionId;
         settingsModel.PipelineType = actionInfo.payload.settings.settingsModel.PipelineType;
+        settingsModel.TapAction = actionInfo.payload.settings.settingsModel.TapAction;
+        settingsModel.LongPressAction = actionInfo.payload.settings.settingsModel.LongPressAction;
     } else {
         settingsModel.PAT = "";
         settingsModel.OrganizationName = "";
@@ -30,6 +32,8 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     document.getElementById('txtPat').value = settingsModel.PAT;    
     document.getElementById('txtDefinitionId').value = settingsModel.DefinitionId;
     document.getElementById('pipeline_type').value = settingsModel.PipelineType;
+    document.getElementById('tap_action').value = settingsModel.TapAction;
+    document.getElementById('long_press_action').value = settingsModel.LongPressAction;
 
     websocket.onopen = function () {
         var json = { event: inRegisterEvent, uuid: inUUID };
@@ -63,6 +67,14 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
                 if (jsonObj.payload.settings.settingsModel.DefinitionId) {
                     settingsModel.DefinitionId = jsonObj.payload.settings.settingsModel.DefinitionId;
                     document.getElementById('txtDefinitionId').value = settingsModel.DefinitionId;
+                }
+                if (jsonObj.payload.settings.settingsModel.TapAction) {
+                    settingsModel.TapAction = jsonObj.payload.settings.settingsModel.TapAction;
+                    document.getElementById('tap_action').value = settingsModel.TapAction;
+                }
+                if (jsonObj.payload.settings.settingsModel.LongPressAction) {
+                    settingsModel.LongPressAction = jsonObj.payload.settings.settingsModel.LongPressAction;
+                    document.getElementById('long_press_action').value = settingsModel.LongPressAction;
                 }
                 break;
             default:

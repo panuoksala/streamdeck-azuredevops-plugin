@@ -9,10 +9,10 @@
 <body>
     <div class="sdpi-wrapper">
         <!-- for more examples of the types of fields supported in property inspector visit:
-                Elgato Github PiSamples -> https://github.com/elgatosf/streamdeck-pisamples
-                and
-                Elgato SDK Documentation -> https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/
-        -->
+            Elgato Github PiSamples -> https://github.com/elgatosf/streamdeck-pisamples
+            and
+            Elgato SDK Documentation -> https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/
+    -->
         <div class="sdpi-item" id="organization_name" type="field">
             <div class="sdpi-item-label">Organization name</div>
             <input id="txtOrganizationName" class="sdpi-item-value" type="text" placeholder="Organization name (dev.azure.com/{your organization})" onKeyUp="setSettings(event.target.value, 'OrganizationName')" required />
@@ -38,7 +38,25 @@
 
         <div class="sdpi-item" id="definition_id" type="field">
             <div class="sdpi-item-label">Definition Id</div>
-            <input id="txtDefinitionId" class="sdpi-item-value" type="number" inputmode="numeric" placeholder="The build or release definition id" onKeyUp="setSettings(event.target.value, 'DefinitionId')" required />
+            <input id="txtDefinitionId" class="sdpi-item-value" type="number" inputmode="numeric" placeholder="The build or release definition id (0 is for all builds/releases)" onKeyUp="setSettings(event.target.value, 'DefinitionId')" required />
+        </div>
+
+        <div class="sdpi-item" id="select_tap_action">
+            <div class="sdpi-item-label">Tap action</div>
+            <select class="sdpi-item-value select" id="tap_action" onchange="setSettings(event.target.value, 'TapAction')">
+                <option value="0">Do nothing</option>
+                <option value="1" selected="selected">Refresh status</option>
+                <option value="2">Start build/release (requires definition ID)</option>
+            </select>
+        </div>
+
+        <div class="sdpi-item" id="select_long_press_action">
+            <div class="sdpi-item-label">Long press action</div>
+            <select class="sdpi-item-value select" id="long_press_action" onchange="setSettings(event.target.value, 'LongPressAction')">
+                <option value="0">Do nothing</option>
+                <option value="1">Refresh status</option>
+                <option value="2" selected="selected">Start build/release (requires definition ID)</option>
+            </select>
         </div>
 
     </div>
