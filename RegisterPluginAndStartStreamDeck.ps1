@@ -43,7 +43,10 @@ $destDir = "$($env:APPDATA)\Elgato\StreamDeck\Plugins\$pluginID.sdPlugin"
 
 $pluginName = Split-Path $basePath -leaf
 
-Get-Process -Name ("StreamDeck", $pluginName) -ErrorAction SilentlyContinue | Stop-Process –force -ErrorAction SilentlyContinue
+Get-Process -Name ("StreamDeck", $pluginName) -ErrorAction SilentlyContinue | Stop-Process –force -ErrorAction SilentlyContinue | Wait-Process -Timeout 30
+
+# Short wait as the files below might still be locked for few seconds after StreamDeck is closed.
+Start-Sleep 4
 
 # Delete the target directory, make sure the deployment/copy is clean
 If (Test-Path $destDir) {

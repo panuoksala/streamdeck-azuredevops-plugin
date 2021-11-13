@@ -25,7 +25,7 @@ namespace StreamDeckAzureDevOps
                     break;
 
                 case PipelineType.Release:
-                    //await _service.StartRelease(SettingsModel);
+                    statusImage = await _service.GetReleaseStatusImage(SettingsModel);
                     break;
 
                 default:
