@@ -103,7 +103,7 @@ namespace StreamDeckAzureDevOps
 
                     await Manager.ShowOkAsync(args.context);
 
-                    await UpdateDisplay(args);
+                    await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
                     break;
             }
 
