@@ -1,69 +1,41 @@
-﻿using StreamDeckLib;
+﻿using StreamDeckAzureDevOps.Models;
+using StreamDeckAzureDevOps.Services;
+using StreamDeckLib;
 using StreamDeckLib.Messages;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
-
-using Microsoft.VisualStudio.Services.Common;
-using Microsoft.VisualStudio.Services.WebApi;
-using Microsoft.TeamFoundation.Build.WebApi;
-using Microsoft.TeamFoundation.Core.WebApi;
-using StreamDeckAzureDevOps.Models;
-using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 
 namespace StreamDeckAzureDevOps
 {
     [ActionUuid(Uuid = "net.oksala.azuredevops.runner")]
-    public class AzureDevOpsRunnerAction : BaseStreamDeckActionWithSettingsModel<Models.AzureDevOpsSettingsModel>
+    public class AzureDevOpsRunnerAction : BaseAction
     {
-        public override async Task OnKeyUp(StreamDeckEventPayload args)
+        private readonly AzureDevOpsService _service = new AzureDevOpsService();
+
+        public async Task UpdateStatus(string context)
         {
-            try
+            await Manager.SetImageAsync(context, "images/Azure-DevOps-updating.png");
+
+            string statusImage = null;
+            switch ((PipelineType)SettingsModel.PipelineType)
             {
-                // Connect to Azure DevOps Services
-                var credentials = new VssBasicCredential(string.Empty, SettingsModel.PAT);
-                var connection = new VssConnection(new Uri($"https://dev.azure.com/{SettingsModel.OrganizationName}"), credentials);
+                case PipelineType.Build:
+                    statusImage = await _service.GetBuildStatusImage(SettingsModel);
+                    break;
 
-                switch ((PipelineType)SettingsModel.PipelineType)
-                {
-                    case PipelineType.Build:
-                        await StartBuild(connection);
-                        break;
-                    case PipelineType.Release:
-                        await StartRelease(connection);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException($"Unsupported pipeline type {SettingsModel.PipelineType}.");
-                }
+                case PipelineType.Release:
+                    statusImage = await _service.GetReleaseStatusImage(SettingsModel);
+                    break;
 
-                await Manager.ShowOkAsync(args.context);
-
-                await Manager.SetSettingsAsync(args.context, SettingsModel);
+                default:
+                    throw new ArgumentOutOfRangeException($"Unsupported pipeline type {SettingsModel.PipelineType}.");
             }
-            catch (Exception)
+
+            if (statusImage != null)
             {
-                await Manager.ShowAlertAsync(args.context);
+                await Manager.SetImageAsync(context, statusImage);
             }
-        }
-
-        private async Task StartBuild(VssConnection connection)
-        {            
-            var buildClient = connection.GetClient<BuildHttpClient>();
-            var projectClient = connection.GetClient<ProjectHttpClient>();
-
-            var buildDefinition = await buildClient.GetDefinitionAsync(SettingsModel.ProjectName, SettingsModel.DefinitionId);
-            var teamProject = await projectClient.GetProject(SettingsModel.ProjectName);
-
-            await buildClient.QueueBuildAsync(new Build() { Definition = buildDefinition, Project = teamProject });
-        }
-
-        private async Task StartRelease(VssConnection connection)
-        {
-            var releaseClient = connection.GetClient<ReleaseHttpClient2>();
-            var releaseMetaData = new Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseStartMetadata
-            {
-                DefinitionId = SettingsModel.DefinitionId,
-            };
-            await releaseClient.CreateReleaseAsync(releaseMetaData, SettingsModel.ProjectName);
         }
 
         public override async Task OnDidReceiveSettings(StreamDeckEventPayload args)
@@ -71,10 +43,72 @@ namespace StreamDeckAzureDevOps
             await base.OnDidReceiveSettings(args);
         }
 
-        public override async Task OnWillAppear(StreamDeckEventPayload args)
+        public override async Task UpdateDisplay(StreamDeckEventPayload args)
         {
-            await base.OnWillAppear(args);
+            await UpdateStatus(args.context);
         }
 
+        public override async Task OnTap(StreamDeckEventPayload args)
+        {
+            await ExecuteKeyPress(args, (KeyPressAction)SettingsModel.TapAction);
+        }
+
+        public override async Task OnLongPress(StreamDeckEventPayload args)
+        {
+            await ExecuteKeyPress(args, (KeyPressAction)SettingsModel.LongPressAction);
+        }
+
+        public override async Task OnError(StreamDeckEventPayload args, Exception ex)
+        {
+            SettingsModel.ErrorMessage = ex.Message;
+
+            await Manager.ShowAlertAsync(args.context);
+            await Manager.SetImageAsync(args.context, "images/Azure-DevOps-unknown.png");
+
+            await Manager.SetSettingsAsync(args.context, SettingsModel);
+        }
+
+        public override bool IsSettingsValid()
+        {
+            return !string.IsNullOrWhiteSpace(SettingsModel.ProjectName)
+                && !string.IsNullOrWhiteSpace(SettingsModel.OrganizationName)
+                && !string.IsNullOrWhiteSpace(SettingsModel.PAT);
+        }
+
+        private async Task ExecuteKeyPress(StreamDeckEventPayload args, KeyPressAction keyPressAction)
+        {
+            PipelineType pipelineType = (PipelineType)SettingsModel.PipelineType;
+            switch (keyPressAction)
+            {
+                case KeyPressAction.DoNothing:
+                    // Do nothing :)
+                    break;
+
+                case KeyPressAction.UpdateStatus:
+                    await UpdateDisplay(args);
+                    await Manager.ShowOkAsync(args.context);
+                    break;
+
+                case KeyPressAction.Run:
+                    await Manager.SetImageAsync(args.context, "images/Azure-DevOps-updating.png");
+
+                    if (pipelineType == PipelineType.Build)
+                    {
+                        await _service.StartBuild(SettingsModel);
+                    }
+                    else
+                    {
+                        await _service.StartRelease(SettingsModel);
+                    }
+
+                    await Manager.ShowOkAsync(args.context);
+
+                    await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
+                    break;
+            }
+
+            SettingsModel.ErrorMessage = string.Empty;
+            await Manager.SetSettingsAsync(args.context, SettingsModel);
+        }
     }
 }
