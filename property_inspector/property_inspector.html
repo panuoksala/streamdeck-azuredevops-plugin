@@ -59,10 +59,17 @@
             </select>
         </div>
 
-        <div class="sdpi-item" id="txt_update_status_every_second" type="field">
-            <div class="sdpi-item-label">Update status every second</div>
-            <input id="update_status_every_second" class="sdpi-item-value" type="number" inputmode="numeric" placeholder="Update status every X seconds (0 is never)" onKeyUp="setSettings(event.target.value, 'UpdateStatusEverySecond')" required />
-        </div>
+        <div class="sdpi-item" id="select_update_status_every_second">
+            <div class="sdpi-item-label">Status update frequency</div>
+            <select class="sdpi-item-value select" id="update_status_every_second" onchange="setSettings(event.target.value, 'UpdateStatusEverySecond')">
+                <option value="0" selected="selected" >Never</option>
+                <option value="1">Every 10 seconds</option>
+                <option value="2">Every 30 seconds</option>
+                <option value="3">Every 60 seconds</option>
+                <option value="4">Every 180 seconds</option>
+                <option value="5">Every 300 seconds</option>
+            </select>
+        </div>        
 
         <div class="sdpi-item" id="select_long_press_action">
             <div class="sdpi-item-label">Errors</div>
