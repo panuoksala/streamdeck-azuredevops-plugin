@@ -31,3 +31,6 @@ On success build or release init the Stream Deck button will show OK sign for a 
 [Stream Deck SDK]: https://developer.elgato.com/documentation/stream-deck "Elgato's online SDK documentation"
 [Style Guide]: https://developer.elgato.com/documentation/stream-deck/sdk/style-guide/ "The Stream Deck SDK Style Guide"
 [Manifest file]: https://developer.elgato.com/documentation/stream-deck/sdk/manifest "Definition of elements in the manifest.json file"
+
+
+[![.NET](https://github.com/panuoksala/streamdeck-azuredevops-plugin/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/panuoksala/streamdeck-azuredevops-plugin/actions/workflows/dotnet.yml)
