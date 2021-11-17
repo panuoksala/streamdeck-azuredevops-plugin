@@ -1,4 +1,6 @@
-﻿using StreamDeckLib;
+﻿using StreamDeckAzureDevOps.Models;
+using StreamDeckAzureDevOps.Services;
+using StreamDeckLib;
 using StreamDeckLib.Messages;
 using System;
 using System.Threading;
@@ -10,24 +12,28 @@ namespace StreamDeckAzureDevOps
     {
         private CancellationTokenSource _backgroundTaskToken;
         private DateTime _pressDownDateTime;
-        private int _updateStatusEverySecond;
+        private int _currentUpdateFrequency;
 
         protected double DoublePressDuration { get; set; } = 1;
 
         public override async Task OnDidReceiveSettings(StreamDeckEventPayload args)
         {
-            if (_updateStatusEverySecond != SettingsModel.UpdateStatusEverySecond)
+            if (_currentUpdateFrequency != SettingsModel.UpdateStatusEverySecond)
             {
-                _updateStatusEverySecond = SettingsModel.UpdateStatusEverySecond;
-                if (_updateStatusEverySecond == 0)
+                _currentUpdateFrequency = SettingsModel.UpdateStatusEverySecond;
+                if ((StatusUpdateFrequency)_currentUpdateFrequency == StatusUpdateFrequency.Never)
                 {
                     StopBackgroundTask();
                 }
                 else
                 {
-                    StartBackgroundTask(args);
+                    if (IsSettingsValid())
+                    {
+                        StartBackgroundTask(args);
+                    }
                 }
             }
+
             await base.OnDidReceiveSettings(args);
         }
 
@@ -74,7 +80,7 @@ namespace StreamDeckAzureDevOps
                     await UpdateDisplay(args);
                 }
 
-                if (SettingsModel.UpdateStatusEverySecond > 0)
+                if ((StatusUpdateFrequency)SettingsModel.UpdateStatusEverySecond != StatusUpdateFrequency.Never)
                 {
                     StartBackgroundTask(args);
                 }
@@ -134,7 +140,7 @@ namespace StreamDeckAzureDevOps
             while (!ct.IsCancellationRequested)
             {
                 // Cancellation exception is expected.
-                await Task.Delay(TimeSpan.FromSeconds(SettingsModel.UpdateStatusEverySecond), ct);
+                await Task.Delay(TimeSpan.FromSeconds(SettingsModel.GetUpdateFrequencyInSeconds()), ct);
 
                 try
                 {

@@ -2,7 +2,7 @@
   "Actions": [
     {
       "Icon": "images/Azure-DevOps20",
-      "Name": "Azure DevOps build & release plugin by Panu Oksala",
+      "Name": "Build & release plugin by Panu Oksala for Azure DevOps",
       "States": [
         {
           "Image": "images/Azure-DevOps72",

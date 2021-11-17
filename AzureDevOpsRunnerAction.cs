@@ -17,20 +17,12 @@ namespace StreamDeckAzureDevOps
         {
             await Manager.SetImageAsync(context, "images/Azure-DevOps-updating.png");
 
-            string statusImage = null;
-            switch ((PipelineType)SettingsModel.PipelineType)
+            string statusImage = (PipelineType)SettingsModel.PipelineType switch
             {
-                case PipelineType.Build:
-                    statusImage = await _service.GetBuildStatusImage(SettingsModel);
-                    break;
-
-                case PipelineType.Release:
-                    statusImage = await _service.GetReleaseStatusImage(SettingsModel);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException($"Unsupported pipeline type {SettingsModel.PipelineType}.");
-            }
+                PipelineType.Build => await _service.GetBuildStatusImage(SettingsModel),
+                PipelineType.Release => await _service.GetReleaseStatusImage(SettingsModel),
+                _ => throw new ArgumentOutOfRangeException($"Unsupported pipeline type {SettingsModel.PipelineType}."),
+            };
 
             if (statusImage != null)
             {
@@ -39,7 +31,7 @@ namespace StreamDeckAzureDevOps
         }
 
         public override async Task OnDidReceiveSettings(StreamDeckEventPayload args)
-        {
+        {            
             await base.OnDidReceiveSettings(args);
         }
 
@@ -102,8 +94,14 @@ namespace StreamDeckAzureDevOps
                     }
 
                     await Manager.ShowOkAsync(args.context);
-
-                    await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
+                    if((StatusUpdateFrequency)SettingsModel.UpdateStatusEverySecond == StatusUpdateFrequency.Never)
+                    {
+                        await Manager.SetImageAsync(args.context, "images/Azure-DevOps-success.png");
+                    }
+                    else
+                    {
+                        await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
+                    }                    
                     break;
             }
 
