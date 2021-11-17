@@ -25,7 +25,7 @@
   "Name": "AzureDevOpsRunner",
   "Icon": "images/Azure-DevOps72",
   "URL": "https://github.com/panuoksala/streamdeck-azuredevops-plugin",
-  "Version": "1.0",
+  "Version": "1.1.0",
   "SDKVersion": 2,
   "Software": {
     "MinimumVersion": "4.1"
