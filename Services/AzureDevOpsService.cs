@@ -1,4 +1,5 @@
-﻿using Microsoft.TeamFoundation.Build.WebApi;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -16,165 +17,202 @@ namespace StreamDeckAzureDevOps.Services
 {
     public class AzureDevOpsService
     {
+        private readonly ILogger logger;
+
         public TimeSpan StaleInProgressBuild { get; set; } = TimeSpan.FromDays(1);
         public TimeSpan StaleInProgressDeployment { get; set; } = TimeSpan.FromDays(1);
 
+        public AzureDevOpsService(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         public async Task<string> GetBuildStatusImage(AzureDevOpsSettingsModel settings)
         {
-            var connection = GetConnection(settings);
-            var buildClient = connection.GetClient<BuildHttpClient>();
-            var projectClient = connection.GetClient<ProjectHttpClient>();
-
-            var teamProject = await projectClient.GetProject(settings.ProjectName);
-
-            // Definition ID == 0 means that we take whatever build definitions are available.
-            Build build;
-            if (settings.DefinitionId > 0)
+            try
             {
-                // First check the latest in progress build.
-                // It's more useful to show in progress build than latest one because
-                // latest build might be waiting for in progress one to complete.
-                var latestInProgressBuilds = await buildClient.GetBuildsAsync(
-                    teamProject.Id,
-                    top: 1,
-                    queryOrder: BuildQueryOrder.QueueTimeDescending,
-                    definitions: new[] { settings.DefinitionId },
-                    statusFilter: BuildStatus.InProgress);
+                var connection = GetConnection(settings);
+                var buildClient = connection.GetClient<BuildHttpClient>();
+                var projectClient = connection.GetClient<ProjectHttpClient>();
 
-                // Ignore if it's 1 day old. (probably waiting for approval)
-                build = latestInProgressBuilds?.FirstOrDefault(x => x.StartTime > DateTime.UtcNow.Subtract(StaleInProgressBuild));
-                if (build == null)
+                var teamProject = await projectClient.GetProject(settings.ProjectName);
+
+                // Definition ID == 0 means that we take whatever build definitions are available.
+                Build build;
+                if (settings.DefinitionId > 0)
                 {
-                    // Get latest build if there are no active builds.
-                    build = await buildClient.GetLatestBuildAsync(teamProject.Id, settings.DefinitionId.ToString());
+                    // First check the latest in progress build.
+                    // It's more useful to show in progress build than latest one because
+                    // latest build might be waiting for in progress one to complete.
+                    var latestInProgressBuilds = await buildClient.GetBuildsAsync(
+                        teamProject.Id,
+                        top: 1,
+                        queryOrder: BuildQueryOrder.QueueTimeDescending,
+                        definitions: new[] { settings.DefinitionId },
+                        statusFilter: BuildStatus.InProgress);
+
+                    // Ignore if it's 1 day old. (probably waiting for approval)
+                    build = latestInProgressBuilds?.FirstOrDefault(x => x.StartTime > DateTime.UtcNow.Subtract(StaleInProgressBuild));
+                    if (build == null)
+                    {
+                        // Get latest build if there are no active builds.
+                        build = await buildClient.GetLatestBuildAsync(teamProject.Id, settings.DefinitionId.ToString());
+                    }
                 }
+                else
+                {
+                    // Get latest in-progress builds.
+                    var latestInProgressBuilds = await buildClient.GetBuildsAsync(
+                        teamProject.Id,
+                        top: 1,
+                        queryOrder: BuildQueryOrder.QueueTimeDescending,
+                        statusFilter: BuildStatus.InProgress);
+
+                    // Ignore if it's 1 day old. (probably waiting for approval)
+                    build = latestInProgressBuilds?.FirstOrDefault(x => x.StartTime > DateTime.UtcNow.Subtract(StaleInProgressBuild));
+
+                    // No in progress builds.
+                    if (build == null)
+                    {
+                        // Get latest build if there are no active builds.
+                        var latestBuild = await buildClient.GetBuildsAsync(teamProject.Id, top: 1, queryOrder: BuildQueryOrder.QueueTimeDescending);
+                        build = latestBuild?.FirstOrDefault();
+                    }
+                }
+
+                return GetBuildStatusImage(build);
             }
-            else
+            catch (Exception ex)
             {
-                // Get latest in-progress builds.
-                var latestInProgressBuilds = await buildClient.GetBuildsAsync(
-                    teamProject.Id,
-                    top: 1,
-                    queryOrder: BuildQueryOrder.QueueTimeDescending,
-                    statusFilter: BuildStatus.InProgress);
-
-                // Ignore if it's 1 day old. (probably waiting for approval)
-                build = latestInProgressBuilds?.FirstOrDefault(x => x.StartTime > DateTime.UtcNow.Subtract(StaleInProgressBuild));
-
-                // No in progress builds.
-                if (build == null)
-                {
-                    // Get latest build if there are no active builds.
-                    var latestBuild = await buildClient.GetBuildsAsync(teamProject.Id, top: 1, queryOrder: BuildQueryOrder.QueueTimeDescending);
-                    build = latestBuild?.FirstOrDefault();
-                }
+                logger.LogError(ex, "Failed to get build status for build status image.");
+                return string.Empty;
             }
-
-            return GetBuildStatusImage(build);
         }
 
         public async Task StartBuild(AzureDevOpsSettingsModel settings)
         {
-            var connection = GetConnection(settings);
-            var buildClient = connection.GetClient<BuildHttpClient>();
-            var projectClient = connection.GetClient<ProjectHttpClient>();
-
-            var teamProjectTask = projectClient.GetProject(settings.ProjectName);
-
-            List<BuildDefinitionReference> buildDefinitions;
-            if (settings.DefinitionId > 0)
+            try
             {
-                BuildDefinition buildDefinition = await buildClient.GetDefinitionAsync(settings.ProjectName, settings.DefinitionId);
-                if (buildDefinition == null)
-                {
-                    throw new ArgumentException($"Build definition {settings.DefinitionId} not found");
-                }
+                var connection = GetConnection(settings);
+                var buildClient = connection.GetClient<BuildHttpClient>();
+                var projectClient = connection.GetClient<ProjectHttpClient>();
 
-                buildDefinitions = new List<BuildDefinitionReference>
+                var teamProjectTask = projectClient.GetProject(settings.ProjectName);
+
+                List<BuildDefinitionReference> buildDefinitions;
+                if (settings.DefinitionId > 0)
+                {
+                    BuildDefinition buildDefinition = await buildClient.GetDefinitionAsync(settings.ProjectName, settings.DefinitionId);
+                    if (buildDefinition == null)
+                    {
+                        throw new ArgumentException($"Build definition {settings.DefinitionId} not found");
+                    }
+
+                    buildDefinitions = new List<BuildDefinitionReference>
                 {
                     buildDefinition
                 };
-            }
-            else
-            {
-                buildDefinitions = await buildClient.GetDefinitionsAsync(settings.ProjectName);
-                if (buildDefinitions?.Any() != true)
+                }
+                else
                 {
-                    throw new ArgumentException($"No build definitions found");
+                    buildDefinitions = await buildClient.GetDefinitionsAsync(settings.ProjectName);
+                    if (buildDefinitions?.Any() != true)
+                    {
+                        throw new ArgumentException($"No build definitions found");
+                    }
+                }
+
+                var teamProject = await teamProjectTask;
+                foreach (var buildDef in buildDefinitions)
+                {
+                    await buildClient.QueueBuildAsync(new Build() { Definition = buildDef, Project = teamProject });
                 }
             }
-
-            var teamProject = await teamProjectTask;
-            foreach (var buildDef in buildDefinitions)
+            catch (Exception ex)
             {
-                await buildClient.QueueBuildAsync(new Build() { Definition = buildDef, Project = teamProject });
+                logger.LogError(ex, $"Failed to start build {settings.DefinitionId}.");
             }
         }
 
         public async Task<string> GetReleaseStatusImage(AzureDevOpsSettingsModel settings)
         {
-            var connection = GetConnection(settings);
-            var releaseClient = connection.GetClient<ReleaseHttpClient2>();
-            var projectClient = connection.GetClient<ProjectHttpClient>();
-
-            var teamProject = await projectClient.GetProject(settings.ProjectName);
-
-            int? definitionId = settings.DefinitionId > 0
-                ? settings.DefinitionId
-                : null;
-
-            // Prioritize in-progress deployments over waiting/completed.
-            List<Deployment> releases = await releaseClient.GetDeploymentsAsync(
-                    teamProject.Id,
-                    definitionId: definitionId,
-                    queryOrder: ReleaseQueryOrder.Descending,
-                    deploymentStatus: DeploymentStatus.InProgress);
-
-            Deployment deployment = releases?.FirstOrDefault(x => x.QueuedOn > DateTime.UtcNow.Subtract(StaleInProgressBuild));
-            if (deployment == null)
+            try
             {
-                releases = await releaseClient.GetDeploymentsAsync(
-                    teamProject.Id,
-                    definitionId: definitionId,
-                    queryOrder: ReleaseQueryOrder.Descending);
-                deployment = releases?.FirstOrDefault();
-            }
+                var connection = GetConnection(settings);
+                var releaseClient = connection.GetClient<ReleaseHttpClient2>();
+                var projectClient = connection.GetClient<ProjectHttpClient>();
 
-            return GetBuildStatusImage(deployment);
+                var teamProject = await projectClient.GetProject(settings.ProjectName);
+
+                int? definitionId = settings.DefinitionId > 0
+                    ? settings.DefinitionId
+                    : null;
+
+                // Prioritize in-progress deployments over waiting/completed.
+                List<Deployment> releases = await releaseClient.GetDeploymentsAsync(
+                        teamProject.Id,
+                        definitionId: definitionId,
+                        queryOrder: ReleaseQueryOrder.Descending,
+                        deploymentStatus: DeploymentStatus.InProgress);
+
+                Deployment deployment = releases?.FirstOrDefault(x => x.QueuedOn > DateTime.UtcNow.Subtract(StaleInProgressBuild));
+                if (deployment == null)
+                {
+                    releases = await releaseClient.GetDeploymentsAsync(
+                        teamProject.Id,
+                        definitionId: definitionId,
+                        queryOrder: ReleaseQueryOrder.Descending);
+                    deployment = releases?.FirstOrDefault();
+                }
+
+                return GetBuildStatusImage(deployment);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to get release status image.");
+                return string.Empty;
+            }
         }
 
         public async Task StartRelease(AzureDevOpsSettingsModel settings)
         {
-            var connection = GetConnection(settings);
-            var releaseClient = connection.GetClient<ReleaseHttpClient2>();
-
-            List<int> definitionIds = new List<int>();
-            if (settings.DefinitionId > 0)
+            try
             {
-                definitionIds.Add(settings.DefinitionId);
-            }
-            else
-            {
-                var projectClient = connection.GetClient<ProjectHttpClient>();
-                var teamProject = await projectClient.GetProject(settings.ProjectName);
+                var connection = GetConnection(settings);
+                var releaseClient = connection.GetClient<ReleaseHttpClient2>();
 
-                var releaseDefinitions = await releaseClient.GetReleaseDefinitionsAsync(teamProject.Id);
-                if (releaseDefinitions?.Any() != true)
+                List<int> definitionIds = new List<int>();
+                if (settings.DefinitionId > 0)
                 {
-                    throw new ArgumentException($"No release definitions found");
+                    definitionIds.Add(settings.DefinitionId);
+                }
+                else
+                {
+                    var projectClient = connection.GetClient<ProjectHttpClient>();
+                    var teamProject = await projectClient.GetProject(settings.ProjectName);
+
+                    var releaseDefinitions = await releaseClient.GetReleaseDefinitionsAsync(teamProject.Id);
+                    if (releaseDefinitions?.Any() != true)
+                    {
+                        throw new ArgumentException($"No release definitions found");
+                    }
+
+                    definitionIds.AddRange(releaseDefinitions.Select(x => x.Id));
                 }
 
-                definitionIds.AddRange(releaseDefinitions.Select(x => x.Id));
-            }
-
-            foreach (var definitionId in definitionIds)
-            {
-                var releaseMetaData = new ReleaseStartMetadata
+                foreach (var definitionId in definitionIds)
                 {
-                    DefinitionId = definitionId,
-                };
+                    var releaseMetaData = new ReleaseStartMetadata
+                    {
+                        DefinitionId = definitionId,
+                    };
 
-                await releaseClient.CreateReleaseAsync(releaseMetaData, settings.ProjectName);
+                    await releaseClient.CreateReleaseAsync(releaseMetaData, settings.ProjectName);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Failed to start release {settings.DefinitionId}.");
             }
         }
 

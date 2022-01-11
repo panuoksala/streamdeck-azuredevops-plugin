@@ -1,4 +1,6 @@
-﻿using StreamDeckAzureDevOps.Models;
+﻿using Microsoft.Extensions.Logging;
+using Serilog;
+using StreamDeckAzureDevOps.Models;
 using StreamDeckAzureDevOps.Services;
 using StreamDeckLib;
 using StreamDeckLib.Messages;
@@ -11,7 +13,12 @@ namespace StreamDeckAzureDevOps
     [ActionUuid(Uuid = "net.oksala.azuredevops.runner")]
     public class AzureDevOpsRunnerAction : BaseAction
     {
-        private readonly AzureDevOpsService _service = new AzureDevOpsService();
+        private readonly AzureDevOpsService _service;
+
+        public AzureDevOpsRunnerAction()
+        {
+            _service = new AzureDevOpsService(Logger);
+        }
 
         public async Task UpdateStatus(string context)
         {
@@ -31,7 +38,7 @@ namespace StreamDeckAzureDevOps
         }
 
         public override async Task OnDidReceiveSettings(StreamDeckEventPayload args)
-        {            
+        {
             await base.OnDidReceiveSettings(args);
         }
 
@@ -94,14 +101,14 @@ namespace StreamDeckAzureDevOps
                     }
 
                     await Manager.ShowOkAsync(args.context);
-                    if((StatusUpdateFrequency)SettingsModel.UpdateStatusEverySecond == StatusUpdateFrequency.Never)
+                    if ((StatusUpdateFrequency)SettingsModel.UpdateStatusEverySecond == StatusUpdateFrequency.Never)
                     {
                         await Manager.SetImageAsync(args.context, "images/Azure-DevOps-success.png");
                     }
                     else
                     {
                         await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
-                    }                    
+                    }
                     break;
             }
 
