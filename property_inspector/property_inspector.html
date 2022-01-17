@@ -13,9 +13,13 @@
             and
             Elgato SDK Documentation -> https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/
     -->
+        <div class="sdpi-item" id="base_url" type="field">
+            <div class="sdpi-item-label">DevOps base URL</div>
+            <input id="txtBaseUrl" class="sdpi-item-value" type="text" placeholder="Base URL (e.g. dev.azure.com)" onKeyUp="setSettings(event.target.value, 'BaseUrl')" required />
+        </div>
         <div class="sdpi-item" id="organization_name" type="field">
             <div class="sdpi-item-label">Organization name</div>
-            <input id="txtOrganizationName" class="sdpi-item-value" type="text" placeholder="Organization name (dev.azure.com/{your organization})" onKeyUp="setSettings(event.target.value, 'OrganizationName')" required />
+            <input id="txtOrganizationName" class="sdpi-item-value" type="text" placeholder="Organization name (e.g. dev.azure.com/{your organization})" onKeyUp="setSettings(event.target.value, 'OrganizationName')" required />
         </div>
 
         <div class="sdpi-item" id="project_name" type="field">
@@ -69,7 +73,7 @@
                 <option value="4">Every 3 minutes</option>
                 <option value="5">Every 5 minutes</option>
             </select>
-        </div>        
+        </div>
 
         <div class="sdpi-item" id="select_long_press_action">
             <div class="sdpi-item-label">Errors</div>

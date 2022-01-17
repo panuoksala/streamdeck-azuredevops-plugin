@@ -14,6 +14,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
     //initialize values
     if (actionInfo.payload.settings.settingsModel) {
+        settingsModel.BaseUrl = actionInfo.payload.settings.settingsModel.BaseUrl;
         settingsModel.ProjectName = actionInfo.payload.settings.settingsModel.ProjectName;
         settingsModel.OrganizationName = actionInfo.payload.settings.settingsModel.OrganizationName;
         settingsModel.PAT = actionInfo.payload.settings.settingsModel.PAT;
@@ -24,6 +25,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         settingsModel.UpdateStatusEverySecond = actionInfo.payload.settings.settingsModel.UpdateStatusEverySecond;
         settingsModel.ErrorMessage = actionInfo.payload.settings.settingsModel.ErrorMessage;
     } else {
+        settingsModel.baseUrl = "";
         settingsModel.PAT = "";
         settingsModel.OrganizationName = "";
         settingsModel.ProjectName = "";
@@ -31,6 +33,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         settingsModel.ErrorMessage = "";
     }
 
+    document.getElementById('txtBaseUrl').value = settingsModel.BaseUrl;
     document.getElementById('txtProjectName').value = settingsModel.ProjectName;
     document.getElementById('txtOrganizationName').value = settingsModel.OrganizationName;
     document.getElementById('txtPat').value = settingsModel.PAT;    
@@ -53,6 +56,10 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         var sdEvent = jsonObj['event'];
         switch (sdEvent) {
             case "didReceiveSettings":
+                if (jsonObj.payload.settings.settingsModel.BaseUrl) {
+                    settingsModel.BaseUrl = jsonObj.payload.settings.settingsModel.BaseUrl;
+                    document.getElementById('txtBaseUrl').value = settingsModel.BaseUrl;
+                }
                 if (jsonObj.payload.settings.settingsModel.ProjectName) {
                     settingsModel.ProjectName = jsonObj.payload.settings.settingsModel.ProjectName;
                     document.getElementById('txtProjectName').value = settingsModel.ProjectName;
