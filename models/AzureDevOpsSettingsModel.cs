@@ -35,6 +35,8 @@ namespace StreamDeckAzureDevOps.Models
                 _ => 180,
             };
         }
+
+        public string GetFullBranchName() => !string.IsNullOrWhiteSpace(BranchName) ? $"refs/heads/{BranchName}" : null;
     }
 
     public enum PipelineType

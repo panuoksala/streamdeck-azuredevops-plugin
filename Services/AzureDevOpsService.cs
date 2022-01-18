@@ -40,7 +40,7 @@ namespace StreamDeckAzureDevOps.Services
                     queryOrder: BuildQueryOrder.QueueTimeDescending,
                     definitions: new[] { settings.DefinitionId },
                     statusFilter: BuildStatus.InProgress,
-                    branchName: settings.BranchName != null ? $"refs/heads/{settings.BranchName}" : null);
+                    branchName: settings.GetFullBranchName());
 
                 // Ignore if it's 1 day old. (probably waiting for approval)
                 build = latestInProgressBuilds?.FirstOrDefault(x => x.StartTime > DateTime.UtcNow.Subtract(StaleInProgressBuild));
@@ -50,7 +50,7 @@ namespace StreamDeckAzureDevOps.Services
                     build = await buildClient.GetLatestBuildAsync(
                         teamProject.Id,
                         settings.DefinitionId.ToString(),
-                        branchName: settings.BranchName != null ? $"refs/heads/{settings.BranchName}" : null);
+                        branchName: settings.GetFullBranchName());
                 }
             }
             else
@@ -111,7 +111,7 @@ namespace StreamDeckAzureDevOps.Services
             var teamProject = await teamProjectTask;
             foreach (var buildDef in buildDefinitions)
             {
-                await buildClient.QueueBuildAsync(new Build() { Definition = buildDef, Project = teamProject });
+                await buildClient.QueueBuildAsync(new Build() { Definition = buildDef, Project = teamProject, SourceBranch = settings.GetFullBranchName() });
             }
         }
 
