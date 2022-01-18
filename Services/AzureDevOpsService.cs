@@ -39,14 +39,18 @@ namespace StreamDeckAzureDevOps.Services
                     top: 1,
                     queryOrder: BuildQueryOrder.QueueTimeDescending,
                     definitions: new[] { settings.DefinitionId },
-                    statusFilter: BuildStatus.InProgress);
+                    statusFilter: BuildStatus.InProgress,
+                    branchName: settings.BranchName != null ? $"refs/heads/{settings.BranchName}" : null);
 
                 // Ignore if it's 1 day old. (probably waiting for approval)
                 build = latestInProgressBuilds?.FirstOrDefault(x => x.StartTime > DateTime.UtcNow.Subtract(StaleInProgressBuild));
                 if (build == null)
                 {
                     // Get latest build if there are no active builds.
-                    build = await buildClient.GetLatestBuildAsync(teamProject.Id, settings.DefinitionId.ToString());
+                    build = await buildClient.GetLatestBuildAsync(
+                        teamProject.Id,
+                        settings.DefinitionId.ToString(),
+                        branchName: settings.BranchName != null ? $"refs/heads/{settings.BranchName}" : null);
                 }
             }
             else

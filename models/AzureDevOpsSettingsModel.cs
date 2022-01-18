@@ -13,6 +13,7 @@ namespace StreamDeckAzureDevOps.Models
         /// </summary>
         public int PipelineType { get; set; } = 0;
         public int DefinitionId { get; set; } = 0;
+        public string BranchName { get; set; } = "";
 
         public int TapAction { get; set; } = 1;
         public int LongPressAction { get; set; } = 2;
