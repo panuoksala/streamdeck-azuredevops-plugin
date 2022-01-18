@@ -25,7 +25,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         settingsModel.UpdateStatusEverySecond = actionInfo.payload.settings.settingsModel.UpdateStatusEverySecond;
         settingsModel.ErrorMessage = actionInfo.payload.settings.settingsModel.ErrorMessage;
     } else {
-        settingsModel.baseUrl = "";
+        settingsModel.BaseUrl = "";
         settingsModel.PAT = "";
         settingsModel.OrganizationName = "";
         settingsModel.ProjectName = "";
