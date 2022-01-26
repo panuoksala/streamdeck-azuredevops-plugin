@@ -13,13 +13,9 @@
             and
             Elgato SDK Documentation -> https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/
     -->
-        <div class="sdpi-item" id="base_url" type="field">
-            <div class="sdpi-item-label">DevOps base URL</div>
-            <input id="txtBaseUrl" class="sdpi-item-value" type="text" placeholder="Base URL (e.g. dev.azure.com)" onKeyUp="setSettings(event.target.value, 'BaseUrl')" required />
-        </div>
-        <div class="sdpi-item" id="organization_name" type="field">
-            <div class="sdpi-item-label">Organization name</div>
-            <input id="txtOrganizationName" class="sdpi-item-value" type="text" placeholder="Organization name (e.g. dev.azure.com/{your organization})" onKeyUp="setSettings(event.target.value, 'OrganizationName')" required />
+        <div class="sdpi-item" id="organization_url" type="field">
+            <div class="sdpi-item-label">Organization URL</div>
+            <input id="txtOrganizationURL" class="sdpi-item-value" type="text" placeholder="Organization URL (e.g. dev.azure.com/yourorganization)" onKeyUp="setSettings(event.target.value, 'OrganizationURL')" required />
         </div>
 
         <div class="sdpi-item" id="project_name" type="field">

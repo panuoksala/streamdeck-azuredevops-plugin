@@ -4,9 +4,9 @@ namespace StreamDeckAzureDevOps.Models
 {
     public class AzureDevOpsSettingsModel
     {
-        public string BaseUrl { get; set; } = "";
         public string ProjectName { get; set; } = "";
-        public string OrganizationName { get; set; } = "";
+
+        public string OrganizationURL { get; set; } = "";
         public string PAT { get; set; } = "";
         
         /// <summary>
