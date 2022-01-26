@@ -221,7 +221,15 @@ namespace StreamDeckAzureDevOps.Services
         private VssConnection GetConnection(AzureDevOpsSettingsModel settings)
         {
             var credentials = new VssBasicCredential(string.Empty, settings.PAT);
-            return new VssConnection(new Uri($"https://{settings.OrganizationURL}"), credentials);
+            if(settings.OrganizationURL.Contains("https://"))
+            {
+                return new VssConnection(new Uri(settings.OrganizationURL), credentials);
+            }
+            else
+            {
+                return new VssConnection(new Uri($"https://{settings.OrganizationURL}"), credentials);
+            }
+            
         }
     }
 }
