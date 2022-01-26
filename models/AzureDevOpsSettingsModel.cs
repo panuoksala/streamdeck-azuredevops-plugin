@@ -5,7 +5,8 @@ namespace StreamDeckAzureDevOps.Models
     public class AzureDevOpsSettingsModel
     {
         public string ProjectName { get; set; } = "";
-        public string OrganizationName { get; set; } = "";
+
+        public string OrganizationURL { get; set; } = "";
         public string PAT { get; set; } = "";
         
         /// <summary>
@@ -30,7 +31,7 @@ namespace StreamDeckAzureDevOps.Models
                 StatusUpdateFrequency.Every30seconds => 30,
                 StatusUpdateFrequency.Every60seconds => 60,
                 StatusUpdateFrequency.Every180seconds => 180,
-                StatusUpdateFrequency.Every300second => 300,                
+                StatusUpdateFrequency.Every300second => 300,
                 _ => 180,
             };
         }
