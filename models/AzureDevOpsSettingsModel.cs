@@ -50,7 +50,8 @@ namespace StreamDeckAzureDevOps.Models
     {
         DoNothing = 0,
         UpdateStatus = 1,
-        Run = 2
+        Run = 2,
+        Open = 3
     }
 
     public enum StatusUpdateFrequency
