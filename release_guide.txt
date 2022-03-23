@@ -1,0 +1,3 @@
+﻿~\AppData\Roaming\Elgato\StreamDeck\Plugins
+
+.\DistributionTool.exe -b -i net.oksala.azuredevops.sdPlugin -o Release
