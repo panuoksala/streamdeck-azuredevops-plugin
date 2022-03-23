@@ -70,7 +70,7 @@ namespace StreamDeckAzureDevOps
         public override bool IsSettingsValid()
         {
             return !string.IsNullOrWhiteSpace(SettingsModel.ProjectName)
-                && !string.IsNullOrWhiteSpace(SettingsModel.OrganizationName)
+                && !string.IsNullOrWhiteSpace(SettingsModel.OrganizationURL)
                 && !string.IsNullOrWhiteSpace(SettingsModel.PAT);
         }
 

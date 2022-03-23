@@ -5,7 +5,8 @@ namespace StreamDeckAzureDevOps.Models
     public class AzureDevOpsSettingsModel
     {
         public string ProjectName { get; set; } = "";
-        public string OrganizationName { get; set; } = "";
+
+        public string OrganizationURL { get; set; } = "";
         public string PAT { get; set; } = "";
         
         /// <summary>
@@ -13,6 +14,7 @@ namespace StreamDeckAzureDevOps.Models
         /// </summary>
         public int PipelineType { get; set; } = 0;
         public int DefinitionId { get; set; } = 0;
+        public string BranchName { get; set; } = "";
 
         public int TapAction { get; set; } = 1;
         public int LongPressAction { get; set; } = 2;
@@ -30,10 +32,12 @@ namespace StreamDeckAzureDevOps.Models
                 StatusUpdateFrequency.Every30seconds => 30,
                 StatusUpdateFrequency.Every60seconds => 60,
                 StatusUpdateFrequency.Every180seconds => 180,
-                StatusUpdateFrequency.Every300second => 300,                
+                StatusUpdateFrequency.Every300second => 300,
                 _ => 180,
             };
         }
+
+        public string GetFullBranchName() => !string.IsNullOrWhiteSpace(BranchName) ? $"refs/heads/{BranchName}" : null;
     }
 
     public enum PipelineType
