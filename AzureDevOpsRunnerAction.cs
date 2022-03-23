@@ -1,4 +1,6 @@
-﻿using StreamDeckAzureDevOps.Models;
+﻿using Microsoft.Extensions.Logging;
+using Serilog;
+using StreamDeckAzureDevOps.Models;
 using StreamDeckAzureDevOps.Services;
 using StreamDeckLib;
 using StreamDeckLib.Messages;
@@ -11,27 +13,39 @@ namespace StreamDeckAzureDevOps
     [ActionUuid(Uuid = "net.oksala.azuredevops.runner")]
     public class AzureDevOpsRunnerAction : BaseAction
     {
-        private readonly AzureDevOpsService _service = new AzureDevOpsService();
+        private readonly AzureDevOpsService _service;
+
+        public AzureDevOpsRunnerAction()
+        {
+            _service = new AzureDevOpsService(Logger);
+        }
 
         public async Task UpdateStatus(string context)
         {
-            await Manager.SetImageAsync(context, "images/Azure-DevOps-updating.png");
-
-            string statusImage = (PipelineType)SettingsModel.PipelineType switch
+            try
             {
-                PipelineType.Build => await _service.GetBuildStatusImage(SettingsModel),
-                PipelineType.Release => await _service.GetReleaseStatusImage(SettingsModel),
-                _ => throw new ArgumentOutOfRangeException($"Unsupported pipeline type {SettingsModel.PipelineType}."),
-            };
+                await Manager.SetImageAsync(context, "images/Azure-DevOps-updating.png");
 
-            if (statusImage != null)
+                string statusImage = (PipelineType)SettingsModel.PipelineType switch
+                {
+                    PipelineType.Build => await _service.GetBuildStatusImage(SettingsModel),
+                    PipelineType.Release => await _service.GetReleaseStatusImage(SettingsModel),
+                    _ => throw new ArgumentOutOfRangeException($"Unsupported pipeline type {SettingsModel.PipelineType}."),
+                };
+
+                if (statusImage != null)
+                {
+                    await Manager.SetImageAsync(context, statusImage);
+                }
+            }
+            catch (Exception ex)
             {
-                await Manager.SetImageAsync(context, statusImage);
+                Logger.LogError(ex, "Failed to update status.");
             }
         }
 
         public override async Task OnDidReceiveSettings(StreamDeckEventPayload args)
-        {            
+        {
             await base.OnDidReceiveSettings(args);
         }
 
@@ -52,12 +66,19 @@ namespace StreamDeckAzureDevOps
 
         public override async Task OnError(StreamDeckEventPayload args, Exception ex)
         {
-            SettingsModel.ErrorMessage = ex.Message;
+            try
+            {
+                SettingsModel.ErrorMessage = ex.Message;
 
-            await Manager.ShowAlertAsync(args.context);
-            await Manager.SetImageAsync(args.context, "images/Azure-DevOps-unknown.png");
+                await Manager.ShowAlertAsync(args.context);
+                await Manager.SetImageAsync(args.context, "images/Azure-DevOps-unknown.png");
 
-            await Manager.SetSettingsAsync(args.context, SettingsModel);
+                await Manager.SetSettingsAsync(args.context, SettingsModel);
+            }
+            catch (Exception handlingException)
+            {
+                Logger.LogError(handlingException, $"Failed to handle error: {ex.Message}");
+            }
         }
 
         public override bool IsSettingsValid()
@@ -69,44 +90,51 @@ namespace StreamDeckAzureDevOps
 
         private async Task ExecuteKeyPress(StreamDeckEventPayload args, KeyPressAction keyPressAction)
         {
-            PipelineType pipelineType = (PipelineType)SettingsModel.PipelineType;
-            switch (keyPressAction)
+            try
             {
-                case KeyPressAction.DoNothing:
-                    // Do nothing :)
-                    break;
+                PipelineType pipelineType = (PipelineType)SettingsModel.PipelineType;
+                switch (keyPressAction)
+                {
+                    case KeyPressAction.DoNothing:
+                        // Do nothing :)
+                        break;
 
-                case KeyPressAction.UpdateStatus:
-                    await UpdateDisplay(args);
-                    await Manager.ShowOkAsync(args.context);
-                    break;
+                    case KeyPressAction.UpdateStatus:
+                        await UpdateDisplay(args);
+                        await Manager.ShowOkAsync(args.context);
+                        break;
 
-                case KeyPressAction.Run:
-                    await Manager.SetImageAsync(args.context, "images/Azure-DevOps-updating.png");
+                    case KeyPressAction.Run:
+                        await Manager.SetImageAsync(args.context, "images/Azure-DevOps-updating.png");
 
-                    if (pipelineType == PipelineType.Build)
-                    {
-                        await _service.StartBuild(SettingsModel);
-                    }
-                    else
-                    {
-                        await _service.StartRelease(SettingsModel);
-                    }
+                        if (pipelineType == PipelineType.Build)
+                        {
+                            await _service.StartBuild(SettingsModel);
+                        }
+                        else
+                        {
+                            await _service.StartRelease(SettingsModel);
+                        }
 
-                    await Manager.ShowOkAsync(args.context);
-                    if((StatusUpdateFrequency)SettingsModel.UpdateStatusEverySecond == StatusUpdateFrequency.Never)
-                    {
-                        await Manager.SetImageAsync(args.context, "images/Azure-DevOps-success.png");
-                    }
-                    else
-                    {
-                        await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
-                    }                    
-                    break;
+                        await Manager.ShowOkAsync(args.context);
+                        if ((StatusUpdateFrequency)SettingsModel.UpdateStatusEverySecond == StatusUpdateFrequency.Never)
+                        {
+                            await Manager.SetImageAsync(args.context, "images/Azure-DevOps-success.png");
+                        }
+                        else
+                        {
+                            await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
+                        }
+                        break;
+                }
+
+                SettingsModel.ErrorMessage = string.Empty;
+                await Manager.SetSettingsAsync(args.context, SettingsModel);
             }
-
-            SettingsModel.ErrorMessage = string.Empty;
-            await Manager.SetSettingsAsync(args.context, SettingsModel);
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to initiate action from keypress.");
+            }
         }
     }
 }
