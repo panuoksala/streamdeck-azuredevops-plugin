@@ -13,9 +13,9 @@
             and
             Elgato SDK Documentation -> https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/
     -->
-        <div class="sdpi-item" id="organization_name" type="field">
-            <div class="sdpi-item-label">Organization name</div>
-            <input id="txtOrganizationName" class="sdpi-item-value" type="text" placeholder="Organization name (dev.azure.com/{your organization})" onKeyUp="setSettings(event.target.value, 'OrganizationName')" required />
+        <div class="sdpi-item" id="organization_url" type="field">
+            <div class="sdpi-item-label">Organization URL</div>
+            <input id="txtOrganizationURL" class="sdpi-item-value" type="text" placeholder="Organization URL (e.g. dev.azure.com/yourorganization)" onKeyUp="setSettings(event.target.value, 'OrganizationURL')" required />
         </div>
 
         <div class="sdpi-item" id="project_name" type="field">
@@ -39,6 +39,10 @@
         <div class="sdpi-item" id="definition_id" type="field">
             <div class="sdpi-item-label">Definition Id</div>
             <input id="txtDefinitionId" class="sdpi-item-value" type="number" inputmode="numeric" placeholder="The build or release definition id (0 is for all builds/releases)" onKeyUp="setSettings(event.target.value, 'DefinitionId')" required />
+        </div>
+        <div class="sdpi-item" id="branch_name" type="field">
+            <div class="sdpi-item-label">Branch name</div>
+            <input id="txtBranchName" class="sdpi-item-value" type="text" placeholder="Filter by branch name (empty for default)" onKeyUp="setSettings(event.target.value, 'BranchName')" />
         </div>
 
         <div class="sdpi-item" id="select_tap_action">
@@ -69,7 +73,7 @@
                 <option value="4">Every 3 minutes</option>
                 <option value="5">Every 5 minutes</option>
             </select>
-        </div>        
+        </div>
 
         <div class="sdpi-item" id="select_long_press_action">
             <div class="sdpi-item-label">Errors</div>

@@ -49,14 +49,18 @@ namespace StreamDeckAzureDevOps.Services
                         top: 1,
                         queryOrder: BuildQueryOrder.QueueTimeDescending,
                         definitions: new[] { settings.DefinitionId },
-                        statusFilter: BuildStatus.InProgress);
+                        statusFilter: BuildStatus.InProgress,
+                        branchName: settings.GetFullBranchName());
 
                     // Ignore if it's 1 day old. (probably waiting for approval)
                     build = latestInProgressBuilds?.FirstOrDefault(x => x.StartTime > DateTime.UtcNow.Subtract(StaleInProgressBuild));
                     if (build == null)
                     {
                         // Get latest build if there are no active builds.
-                        build = await buildClient.GetLatestBuildAsync(teamProject.Id, settings.DefinitionId.ToString());
+                        build = await buildClient.GetLatestBuildAsync(
+                            teamProject.Id,
+                            settings.DefinitionId.ToString(),
+                            branchName: settings.GetFullBranchName());
                     }
                 }
                 else
@@ -125,12 +129,12 @@ namespace StreamDeckAzureDevOps.Services
                 var teamProject = await teamProjectTask;
                 foreach (var buildDef in buildDefinitions)
                 {
-                    await buildClient.QueueBuildAsync(new Build() { Definition = buildDef, Project = teamProject });
+                    await buildClient.QueueBuildAsync(new Build() { Definition = buildDef, Project = teamProject, SourceBranch = settings.GetFullBranchName() });
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Failed to start build {settings.DefinitionId}.");
+                logger.LogError(ex, $"Failed to start build {settings.DefinitionId}. Please check build settings.");
             }
         }
 
@@ -259,7 +263,15 @@ namespace StreamDeckAzureDevOps.Services
         private VssConnection GetConnection(AzureDevOpsSettingsModel settings)
         {
             var credentials = new VssBasicCredential(string.Empty, settings.PAT);
-            return new VssConnection(new Uri($"https://dev.azure.com/{settings.OrganizationName}"), credentials);
+            if (settings.OrganizationURL.Contains("https://"))
+            {
+                return new VssConnection(new Uri(settings.OrganizationURL), credentials);
+            }
+            else
+            {
+                return new VssConnection(new Uri($"https://{settings.OrganizationURL}"), credentials);
+            }
+
         }
     }
 }

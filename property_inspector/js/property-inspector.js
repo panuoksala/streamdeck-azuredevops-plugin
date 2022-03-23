@@ -15,26 +15,29 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     //initialize values
     if (actionInfo.payload.settings.settingsModel) {
         settingsModel.ProjectName = actionInfo.payload.settings.settingsModel.ProjectName;
-        settingsModel.OrganizationName = actionInfo.payload.settings.settingsModel.OrganizationName;
+        settingsModel.OrganizationURL = actionInfo.payload.settings.settingsModel.OrganizationURL;
         settingsModel.PAT = actionInfo.payload.settings.settingsModel.PAT;
         settingsModel.DefinitionId = actionInfo.payload.settings.settingsModel.DefinitionId;
         settingsModel.PipelineType = actionInfo.payload.settings.settingsModel.PipelineType;
+        settingsModel.BranchName = actionInfo.payload.settings.settingsModel.BranchName ?? "";
         settingsModel.TapAction = actionInfo.payload.settings.settingsModel.TapAction;
         settingsModel.LongPressAction = actionInfo.payload.settings.settingsModel.LongPressAction;
         settingsModel.UpdateStatusEverySecond = actionInfo.payload.settings.settingsModel.UpdateStatusEverySecond;
         settingsModel.ErrorMessage = actionInfo.payload.settings.settingsModel.ErrorMessage;
     } else {
         settingsModel.PAT = "";
-        settingsModel.OrganizationName = "";
+        settingsModel.OrganizationURL = "";
         settingsModel.ProjectName = "";
+        settingsModel.BranchName = "";
         settingsModel.UpdateStatusEverySecond = 60;
         settingsModel.ErrorMessage = "";
     }
 
     document.getElementById('txtProjectName').value = settingsModel.ProjectName;
-    document.getElementById('txtOrganizationName').value = settingsModel.OrganizationName;
+    document.getElementById('txtOrganizationURL').value = settingsModel.OrganizationURL;
     document.getElementById('txtPat').value = settingsModel.PAT;    
     document.getElementById('txtDefinitionId').value = settingsModel.DefinitionId;
+    document.getElementById('txtBranchName').value = settingsModel.BranchName;
     document.getElementById('pipeline_type').value = settingsModel.PipelineType;
     document.getElementById('tap_action').value = settingsModel.TapAction;
     document.getElementById('long_press_action').value = settingsModel.LongPressAction;
@@ -57,9 +60,9 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
                     settingsModel.ProjectName = jsonObj.payload.settings.settingsModel.ProjectName;
                     document.getElementById('txtProjectName').value = settingsModel.ProjectName;
                 }
-                if (jsonObj.payload.settings.settingsModel.OrganizationName) {
-                    settingsModel.OrganizationName = jsonObj.payload.settings.settingsModel.OrganizationName;
-                    document.getElementById('txtOrganizationName').value = settingsModel.OrganizationName;
+                if (jsonObj.payload.settings.settingsModel.OrganizationURL) {
+                    settingsModel.OrganizationURL = jsonObj.payload.settings.settingsModel.OrganizationURL;
+                    document.getElementById('txtOrganizationURL').value = settingsModel.OrganizationURL;
                 }
                 if (jsonObj.payload.settings.settingsModel.PAT) {
                     settingsModel.PAT = jsonObj.payload.settings.settingsModel.PAT;
@@ -72,6 +75,10 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
                 if (jsonObj.payload.settings.settingsModel.DefinitionId) {
                     settingsModel.DefinitionId = jsonObj.payload.settings.settingsModel.DefinitionId;
                     document.getElementById('txtDefinitionId').value = settingsModel.DefinitionId;
+                }
+                if (jsonObj.payload.settings.settingsModel.BranchName) {
+                    settingsModel.BranchName = jsonObj.payload.settings.settingsModel.BranchName;
+                    document.getElementById('txtBranchName').value = settingsModel.BranchName;
                 }
                 if (jsonObj.payload.settings.settingsModel.TapAction) {
                     settingsModel.TapAction = jsonObj.payload.settings.settingsModel.TapAction;
