@@ -14,10 +14,10 @@ Install the plugin from Stream Deck Store and create Azure DevOps PAT token with
 |---------------------------|------------|
 | Title                     |Overlay text on top of the Azure DevOps icon.|
 | Organization URL          |The Azure DevOps URL with or without https://. For example : dev.azure.com/{your organization}.|
-| Project name              |The personal access token with **read and execute** permissions for build and release pipelines. Dont create PAT tokens with full access!|
+| Project name              |Azure DevOps project name.|
 | PAT                       |The personal access token with read and execute permissions for build and release pipelines. Dont create PAT tokens with full access!|
 | Pipeline type             |Build or release depending on what kind of action you want to trigger|
-| Definition Id             |The build or release definition ID. Open the pipeline in edit mode and copy the ID from URL.|
+| Definition Id             |The build or release definition ID. Open the pipeline at edit mode (in Azure DevOps) and copy the ID from URL.|
 | Branch name               |Leave empty to use pipelines default branch, or specify branch name that you want to build.|
 | Tap action                |What happens when StreamDeck button is pressed|
 | Long press action         |What happens if the StreamDeck button is pressed over one second|
