@@ -126,6 +126,14 @@ namespace StreamDeckAzureDevOps
                             await Manager.SetImageAsync(args.context, "images/Azure-DevOps-waiting.png");
                         }
                         break;
+                    case KeyPressAction.Open:
+                        string organization = SettingsModel.OrganizationURL.Contains("https://") ? SettingsModel.OrganizationURL : $"https://{SettingsModel.OrganizationURL}";
+                        string type = pipelineType == PipelineType.Build ? "_build" : "_release";
+                        string url = $"{organization}/{SettingsModel.ProjectName}/{type}?definitionId={SettingsModel.DefinitionId}";
+
+                        await Manager.OpenUrlAsync(args.context, url);
+
+                        break;
                 }
 
                 SettingsModel.ErrorMessage = string.Empty;
