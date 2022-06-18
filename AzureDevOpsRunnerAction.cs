@@ -93,6 +93,8 @@ namespace StreamDeckAzureDevOps
             try
             {
                 PipelineType pipelineType = (PipelineType)SettingsModel.PipelineType;
+                SettingsModel.ErrorMessage = string.Empty;
+                
                 switch (keyPressAction)
                 {
                     case KeyPressAction.DoNothing:
@@ -127,21 +129,21 @@ namespace StreamDeckAzureDevOps
                         }
                         break;
                     case KeyPressAction.Open:
-                        string organization = SettingsModel.OrganizationURL.Contains("https://") ? SettingsModel.OrganizationURL : $"https://{SettingsModel.OrganizationURL}";
-                        string type = pipelineType == PipelineType.Build ? "_build" : "_release";
-                        string url = $"{organization}/{SettingsModel.ProjectName}/{type}?definitionId={SettingsModel.DefinitionId}";
+                        var organization = SettingsModel.OrganizationNameFormatted();
+                        var type = pipelineType == PipelineType.Build ? "_build" : "_release";
+                        var url = $"{organization}/{SettingsModel.ProjectName}/{type}?definitionId={SettingsModel.DefinitionId}";
 
                         await Manager.OpenUrlAsync(args.context, url);
 
                         break;
                 }
-
-                SettingsModel.ErrorMessage = string.Empty;
+                
                 await Manager.SetSettingsAsync(args.context, SettingsModel);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed to initiate action from keypress.");
+                throw;
             }
         }
     }

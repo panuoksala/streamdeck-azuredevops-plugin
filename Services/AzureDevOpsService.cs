@@ -135,6 +135,8 @@ namespace StreamDeckAzureDevOps.Services
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Failed to start build {settings.DefinitionId}. Please check build settings.");
+                settings.ErrorMessage = "Failed to start build. Check settings.";
+                throw;
             }
         }
 
@@ -217,6 +219,8 @@ namespace StreamDeckAzureDevOps.Services
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Failed to start release {settings.DefinitionId}.");
+                settings.ErrorMessage = "Failed to start release. Check settings.";
+                throw;
             }
         }
 
@@ -263,15 +267,7 @@ namespace StreamDeckAzureDevOps.Services
         private VssConnection GetConnection(AzureDevOpsSettingsModel settings)
         {
             var credentials = new VssBasicCredential(string.Empty, settings.PAT);
-            if (settings.OrganizationURL.Contains("https://"))
-            {
-                return new VssConnection(new Uri(settings.OrganizationURL), credentials);
-            }
-            else
-            {
-                return new VssConnection(new Uri($"https://{settings.OrganizationURL}"), credentials);
-            }
-
+            return new VssConnection(new Uri(settings.OrganizationNameFormatted()), credentials);
         }
     }
 }
