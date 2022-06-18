@@ -6,35 +6,26 @@ Use GitHub issues to submit any bugs / feature requests.
 
 ## How to use this plugin
 
-Install the plugin from Stream Deck Store and create Azure DevOps PAT token with read & execute permissions to run builds and releases.
+Install the plugin from Stream Deck Store and create Azure DevOps PAT token with **read & execute** permissions for builds and releases.
 
 ### Configurations
 
-**Title:** Overlay text on top of the Azure DevOps icon.\
-
-**Organization URL:** The Azure DevOps URL with or without https://. For example : *dev.azure.com/{your organization}.*\
-
-**Project name:** The name of the project like it is in the project URL. Spaces must be replaced with %20. For example "Example Project" is *Example%20Project*\
-
-**PAT:** The personal access token with read and execute permissions for build and release pipelines. Dont create PAT tokens with full access!\
-
-**Pipeline type:** Build or release depending on what kind of action you want to trigger\
-
-**Definition Id:** The build or release definition ID. Open the pipeline in edit mode and copy the ID from URL. For example: *https://dev.azure.com/{organization name}/{projectname}/_apps/hub/ms.vss-ciworkflow.build-ci-hub?_a=edit-build-definition&id={definition ID}*\
-
-**Branch name:** Leave empty to use pipelines default branch, or specify branch name that you want to build.\
-
-**Tap action:** What happens when StreamDeck button is pressed: Do nothing, Check build/release status or start build/release.\
-
-**Long press action:** What happens if the StreamDeck button is pressed over one second: Do nothing, Check build/release status or start build/release.\
-
-**Status update frequency:** How often the build/release status is requested automatically from Azure DevOps. Makes API calls with given interval.\
-
-**Errors:** Shows the possible error message that is received when button action is invoked.
-
-If the configuration is wrong the Stream Deck button will show exclamation icon indicating that some of the configuration is not correct. Check configuration and try again.\
+| Setting                   | Description|
+|---------------------------|------------|
+| Title                     |Overlay text on top of the Azure DevOps icon.|
+| Organization URL          |The Azure DevOps URL with or without https://. For example : dev.azure.com/{your organization}.|
+| Project name              |The personal access token with **read and execute** permissions for build and release pipelines. Dont create PAT tokens with full access!|
+| PAT                       |The personal access token with read and execute permissions for build and release pipelines. Dont create PAT tokens with full access!|
+| Pipeline type             |Build or release depending on what kind of action you want to trigger|
+| Definition Id             |The build or release definition ID. Open the pipeline in edit mode and copy the ID from URL.|
+| Branch name               |Leave empty to use pipelines default branch, or specify branch name that you want to build.|
+| Tap action                |What happens when StreamDeck button is pressed|
+| Long press action         |What happens if the StreamDeck button is pressed over one second|
+| Status update frequency   |How often the build/release status is requested automatically from Azure DevOps. Makes API calls with given interval.|
+| Errors                    |Shows the possible error message that is received when button action is invoked.|
 
 On success build or release init the Stream Deck button will show OK sign for a short while.
+If Stream Deck shows red question icon on top right corner of the button, check logs from plugin folder for more details.
 
 ## Contribution guide
 
