@@ -31,7 +31,7 @@
 		<PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.191.0-preview" />
 		<PackageReference Include="StreamDeckLib" Version="0.*" />
 		<PackageReference Include="StreamDeckLib.Config" Version="0.*" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
 		<PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.1" />
