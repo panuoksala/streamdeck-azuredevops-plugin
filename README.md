@@ -16,8 +16,8 @@ Install the plugin from Stream Deck Store and create Azure DevOps PAT token with
 | Organization URL          |The Azure DevOps URL with or without https://. For example : dev.azure.com/{your organization}.|
 | Project name              |Azure DevOps project name.|
 | PAT                       |The personal access token with read and execute permissions for build and release pipelines. Dont create PAT tokens with full access!|
-| Pipeline type             |Build or release depending on what kind of action you want to trigger|
-| Definition Id             |The build or release definition ID. Open the pipeline at edit mode (in Azure DevOps) and copy the ID from URL.|
+| Pipeline type             |Build, release or pull requests depending on what kind of action you want to trigger|
+| Definition Id             |The build or release definition ID / Repository name if pipeline type is Pull Requests. To get pipeline id: Open the pipeline at edit mode (in Azure DevOps) and copy the ID from URL.|
 | Branch name               |Leave empty to use pipelines default branch, or specify branch name that you want to build.|
 | Tap action                |What happens when StreamDeck button is pressed|
 | Long press action         |What happens if the StreamDeck button is pressed over one second|
@@ -35,6 +35,8 @@ If Stream Deck shows red question icon on top right corner of the button, check 
 4. Visual Studio should automatically add Azure DevOps button into your Stream Deck app / device.
 5. To debug the app just run it and attach debugger into StreamDeck application (you might have two so try both).
 6. If you experience problems try to run the Visual Studio in Administrator mode.
+
+If you have problems to build plugin after debugging, quick fix is to restart Visual Studio.
 
 
 ## References

@@ -30,6 +30,7 @@ namespace StreamDeckAzureDevOps
                 {
                     PipelineType.Build => await _service.GetBuildStatusImage(SettingsModel),
                     PipelineType.Release => await _service.GetReleaseStatusImage(SettingsModel),
+                    PipelineType.PullRequests => await _service.GetPrStatusImage(SettingsModel),
                     _ => throw new ArgumentOutOfRangeException($"Unsupported pipeline type {SettingsModel.PipelineType}."),
                 };
 
@@ -94,7 +95,8 @@ namespace StreamDeckAzureDevOps
             {
                 PipelineType pipelineType = (PipelineType)SettingsModel.PipelineType;
                 SettingsModel.ErrorMessage = string.Empty;
-                
+                var organization = SettingsModel.OrganizationNameFormatted();
+
                 switch (keyPressAction)
                 {
                     case KeyPressAction.DoNothing:
@@ -113,9 +115,15 @@ namespace StreamDeckAzureDevOps
                         {
                             await _service.StartBuild(SettingsModel);
                         }
-                        else
+                        else if(pipelineType == PipelineType.Release)
                         {
                             await _service.StartRelease(SettingsModel);
+                        }
+                        else if(pipelineType == PipelineType.PullRequests)
+                        {
+                            // Open new pull request page
+                            var newPrUrl = $"{organization}/{SettingsModel.ProjectName}/_git/{SettingsModel.DefinitionId}/pullrequestcreate?sourceRef=&targetRef=";
+                            await Manager.OpenUrlAsync(args.context, newPrUrl);
                         }
 
                         await Manager.ShowOkAsync(args.context);
@@ -129,9 +137,20 @@ namespace StreamDeckAzureDevOps
                         }
                         break;
                     case KeyPressAction.Open:
-                        var organization = SettingsModel.OrganizationNameFormatted();
-                        var type = pipelineType == PipelineType.Build ? "_build" : "_release";
-                        var url = $"{organization}/{SettingsModel.ProjectName}/{type}?definitionId={SettingsModel.DefinitionId}";
+                        string url = "";
+                        if (pipelineType == PipelineType.Build)
+                        {
+                            url = $"{organization}/{SettingsModel.ProjectName}/_build?definitionId={SettingsModel.DefinitionId}";
+                        }
+                        else if(pipelineType == PipelineType.Release)
+                        {
+                            url = $"{organization}/{SettingsModel.ProjectName}/_release?definitionId={SettingsModel.DefinitionId}";
+                        }
+                        else if(pipelineType == PipelineType.PullRequests)
+                        {
+                            // Show active pull requests page
+                            url = $"{organization}/{SettingsModel.ProjectName}/_git/{SettingsModel.DefinitionId}/pullrequests?_a=active";
+                        }
 
                         await Manager.OpenUrlAsync(args.context, url);
 
