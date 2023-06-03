@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
@@ -37,9 +38,9 @@ namespace StreamDeckAzureDevOps.Services
 
                 var teamProject = await projectClient.GetProject(settings.ProjectName);
 
-                // Definition ID == 0 means that we take whatever build definitions are available.
+                // Definition ID == "" means that we take whatever build definitions are available.
                 Build build;
-                if (settings.DefinitionId > 0)
+                if (settings.DefinitionId != string.Empty)
                 {
                     // First check the latest in progress build.
                     // It's more useful to show in progress build than latest one because
@@ -48,7 +49,7 @@ namespace StreamDeckAzureDevOps.Services
                         teamProject.Id,
                         top: 1,
                         queryOrder: BuildQueryOrder.QueueTimeDescending,
-                        definitions: new[] { settings.DefinitionId },
+                        definitions: new[] { int.Parse(settings.DefinitionId) },
                         statusFilter: BuildStatus.InProgress,
                         branchName: settings.GetFullBranchName());
 
@@ -104,9 +105,9 @@ namespace StreamDeckAzureDevOps.Services
                 var teamProjectTask = projectClient.GetProject(settings.ProjectName);
 
                 List<BuildDefinitionReference> buildDefinitions;
-                if (settings.DefinitionId > 0)
+                if (settings.DefinitionId != string.Empty)
                 {
-                    BuildDefinition buildDefinition = await buildClient.GetDefinitionAsync(settings.ProjectName, settings.DefinitionId);
+                    BuildDefinition buildDefinition = await buildClient.GetDefinitionAsync(settings.ProjectName, int.Parse(settings.DefinitionId));
                     if (buildDefinition == null)
                     {
                         throw new ArgumentException($"Build definition {settings.DefinitionId} not found");
@@ -150,9 +151,7 @@ namespace StreamDeckAzureDevOps.Services
 
                 var teamProject = await projectClient.GetProject(settings.ProjectName);
 
-                int? definitionId = settings.DefinitionId > 0
-                    ? settings.DefinitionId
-                    : null;
+                int? definitionId = settings.DefinitionId != string.Empty ? int.Parse(settings.DefinitionId): null;
 
                 // Prioritize in-progress deployments over waiting/completed.
                 List<Deployment> releases = await releaseClient.GetDeploymentsAsync(
@@ -188,9 +187,9 @@ namespace StreamDeckAzureDevOps.Services
                 var releaseClient = connection.GetClient<ReleaseHttpClient2>();
 
                 List<int> definitionIds = new List<int>();
-                if (settings.DefinitionId > 0)
+                if (settings.DefinitionId != string.Empty)
                 {
-                    definitionIds.Add(settings.DefinitionId);
+                    definitionIds.Add(int.Parse(settings.DefinitionId));
                 }
                 else
                 {
@@ -262,6 +261,24 @@ namespace StreamDeckAzureDevOps.Services
                 DeploymentStatus.InProgress => "images/Azure-DevOps-in-progress.png",
                 _ => "images/Azure-DevOps-unknown.png",
             };
+        }
+
+        public async Task<string> GetPrStatusImage(AzureDevOpsSettingsModel settingsModel)
+        {
+            var connection = GetConnection(settingsModel);
+            var repositoryClient = connection.GetClient<GitHttpClient>();
+            var pullRequests = await repositoryClient.GetPullRequestsByProjectAsync(settingsModel.ProjectName, new GitPullRequestSearchCriteria { Status = PullRequestStatus.Active });
+
+            var count = pullRequests.Where(_ => string.Equals(_.Repository.Name, settingsModel.DefinitionId, StringComparison.CurrentCultureIgnoreCase)).Count();
+
+            if (count < 10)
+            {
+                return $"images/Azure-DevOps-{count}.png";
+            }
+            else
+            {
+                return "images/Azure-DevOps-9plus.png";
+            }            
         }
 
         private VssConnection GetConnection(AzureDevOpsSettingsModel settings)

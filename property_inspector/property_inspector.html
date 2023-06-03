@@ -29,16 +29,17 @@
         </div>
 
         <div class="sdpi-item" id="select_single">
-            <div class="sdpi-item-label">Pipeline type</div>
+            <div class="sdpi-item-label">Action type</div>
             <select class="sdpi-item-value select" id="pipeline_type" onchange="setSettings(event.target.value, 'PipelineType')">
                 <option value="0" selected="selected">Build</option>
                 <option value="1">Release</option>
+                <option value="2">Pull Requests</option>
             </select>
         </div>
 
         <div class="sdpi-item" id="definition_id" type="field">
-            <div class="sdpi-item-label">Definition Id</div>
-            <input id="txtDefinitionId" class="sdpi-item-value" type="number" inputmode="numeric" placeholder="The build or release definition id (0 is for all builds/releases)" onKeyUp="setSettings(event.target.value, 'DefinitionId')" required />
+            <div class="sdpi-item-label">Definition Id <br />(repository if PRs)</div>
+            <input id="txtDefinitionId" class="sdpi-item-value" type="text"  placeholder="The build or release definition id (0 is for all builds/releases). Repository name for Pull requests" onKeyUp="setSettings(event.target.value, 'DefinitionId')" required />
         </div>
         <div class="sdpi-item" id="branch_name" type="field">
             <div class="sdpi-item-label">Branch name</div>
@@ -50,8 +51,8 @@
             <select class="sdpi-item-value select" id="tap_action" onchange="setSettings(event.target.value, 'TapAction')">
                 <option value="0">Do nothing</option>
                 <option value="1" selected="selected">Refresh status</option>
-                <option value="2">Start build/release</option>
-                <option value="3">Open build/release in Browser</option>
+                <option value="2">Start build/release/open new pr</option>
+                <option value="3">Open page in Browser</option>
             </select>
         </div>
 
@@ -60,8 +61,8 @@
             <select class="sdpi-item-value select" id="long_press_action" onchange="setSettings(event.target.value, 'LongPressAction')">
                 <option value="0">Do nothing</option>
                 <option value="1">Refresh status</option>
-                <option value="2" selected="selected">Start build/release</option>
-                <option value="3">Open build/release in Browser</option>
+                <option value="2" selected="selected">Start build/release/open new PR</option>
+                <option value="3">Open page in Browser</option>
             </select>
         </div>
 

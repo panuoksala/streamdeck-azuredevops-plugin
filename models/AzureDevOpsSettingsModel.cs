@@ -25,9 +25,9 @@ namespace StreamDeckAzureDevOps.Models
         public int PipelineType { get; set; } = 0;
 
         /// <summary>
-        /// Build or release definition unique identifier. Can be picked from Azure DevOps build/release pipeline URL
+        /// Build, release or reponame definition unique identifier. Can be picked from Azure DevOps build/release pipeline URL
         /// </summary>
-        public int DefinitionId { get; set; } = 0;
+        public string DefinitionId { get; set; } = "";
         
         /// <summary>
         /// The branch name
@@ -76,7 +76,8 @@ namespace StreamDeckAzureDevOps.Models
     public enum PipelineType
     {
         Build = 0,
-        Release = 1
+        Release = 1,
+        PullRequests = 2
     }
 
     public enum KeyPressAction
