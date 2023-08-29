@@ -33,7 +33,7 @@
 		<PackageReference Include="StreamDeckLib.Config" Version="0.*" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
