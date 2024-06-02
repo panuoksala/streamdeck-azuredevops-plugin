@@ -1,3 +1,5 @@
+[![.NET](https://github.com/panuoksala/streamdeck-azuredevops-plugin/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/panuoksala/streamdeck-azuredevops-plugin/actions/workflows/dotnet.yml)
+
 # Stream Deck Azure DevOps plugin
 
 Source code of Azure DevOps plugin by Panu Oksala for [Elgato Stream Deck][Stream Deck]. This project works currently only on Windows devices.
@@ -53,6 +55,3 @@ If you have problems to build plugin after debugging, quick fix is to restart Vi
 [Stream Deck SDK]: https://developer.elgato.com/documentation/stream-deck "Elgato's online SDK documentation"
 [Style Guide]: https://developer.elgato.com/documentation/stream-deck/sdk/style-guide/ "The Stream Deck SDK Style Guide"
 [Manifest file]: https://developer.elgato.com/documentation/stream-deck/sdk/manifest "Definition of elements in the manifest.json file"
-
-
-[![.NET](https://github.com/panuoksala/streamdeck-azuredevops-plugin/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/panuoksala/streamdeck-azuredevops-plugin/actions/workflows/dotnet.yml)
