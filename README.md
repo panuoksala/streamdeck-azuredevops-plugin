@@ -35,6 +35,7 @@ If Stream Deck shows red question icon on top right corner of the button, check 
 4. Visual Studio should automatically add Azure DevOps button into your Stream Deck app / device.
 5. To debug the app just run it and attach debugger into StreamDeck application (you might have two so try both).
 6. If you experience problems try to run the Visual Studio in Administrator mode.
+7. Build/Rebuild will stop StreamDeck app, so start it manually after every build. It will reload changes automatically.
 
 If you have problems to build plugin after debugging, quick fix is to restart Visual Studio.
 

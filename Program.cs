@@ -1,21 +1,25 @@
-﻿using StreamDeckLib;
+﻿using Microsoft.Extensions.Hosting;
+using StreamDeckLib;
+using StreamDeckLib.DependencyInjection;
+using StreamDeckLib.Hosting;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 
 namespace StreamDeckAzureDevOps
 {
     class Program
     {
-
-        static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            using (var config = StreamDeckLib.Config.ConfigurationBuilder.BuildDefaultConfiguration(args))
-            {
-                await ConnectionManager.Initialize(args, config.LoggerFactory)
-                                                             .RegisterAllActions(typeof(Program).Assembly)
-                                                             .StartAsync();
-            }
-
+            CreateHostBuilder(args).Build().Run();
         }
 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+                Host.CreateDefaultBuilder(args)
+                        .ConfigureStreamDeckToolkit(args)
+                        .ConfigureServices((hostContext, services) =>
+                        {
+                            services.AddStreamDeck(hostContext.Configuration, typeof(Program).Assembly);
+                        });
     }
 }
